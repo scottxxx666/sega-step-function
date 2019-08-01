@@ -1,0 +1,137 @@
+{
+  "StartAt": "Booking",
+  "States": {
+    "Booking": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "sega_pattern",
+        "Item": {
+          "action": {
+            "S": "Booking"
+          }
+        }
+      },
+      "Next": "Using Coupon",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Cancel Booking"
+        }
+      ]
+    },
+    "Using Coupon": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "sega_pattern",
+        "Item": {
+          "action": {
+            "S": "Using Coupon"
+          }
+        }
+      },
+      "Next": "Paying",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Sending Back Coupon"
+        }
+      ]
+    },
+    "Paying": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "sega_pattern",
+        "Item": {
+          "action": {
+            "S": "Paying"
+          }
+        }
+      },
+      "Next": "Succeed",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Cancel Paying"
+        }
+      ]
+    },
+    "Cancel Paying": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "sega_pattern",
+        "Item": {
+          "action": {
+            "S": "Cancel Paying"
+          }
+        }
+      },
+      "Next": "Sending Back Coupon",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Cancel Paying"
+        }
+      ]
+    },
+    "Sending Back Coupon": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "sega_pattern",
+        "Item": {
+          "action": {
+            "S": "Sending Back Coupon"
+          }
+        }
+      },
+      "Next": "Cancel Booking",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Sending Back Coupon"
+        }
+      ]
+    },
+    "Cancel Booking": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "sega_pattern",
+        "Item": {
+          "action": {
+            "S": "Cancel Booking"
+          }
+        }
+      },
+      "Next": "Fail",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "Cancel Booking"
+        }
+      ]
+    },
+    "Fail": {
+      "Type": "Fail"
+    },
+    "Succeed": {
+      "Type": "Succeed"
+    }
+  }
+}
